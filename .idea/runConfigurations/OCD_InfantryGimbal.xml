@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration name="OCD InfantryGimbal" type="com.jetbrains.cidr.embedded.openocd.conf.type" factoryName="com.jetbrains.cidr.embedded.openocd.conf.factory" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="InfantryGimbal" TARGET_NAME="InfantryGimbal.elf" version="1" RUN_TARGET_PROJECT_NAME="InfantryGimbal" RUN_TARGET_NAME="InfantryGimbal.elf">
+    <openocd version="1" gdb-port="3333" telnet-port="4444" board-config="board/st_nucleo_h743zi.cfg" reset-type="INIT" download-type="UPDATED_ONLY">
+      <debugger kind="GDB">C:\CLionToolchains\gcc-arm-none-eabi-10.3-2021.10\bin\arm-none-eabi-gdb.exe</debugger>
+    </openocd>
+    <method v="2">
+      <option name="CLION.COMPOUND.BUILD" enabled="true" />
+    </method>
+  </configuration>
+</component>
