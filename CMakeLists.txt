@@ -50,25 +50,46 @@ else ()
 endif ()
 
 include_directories(Core/Inc Drivers/STM32H7xx_HAL_Driver/Inc Drivers/STM32H7xx_HAL_Driver/Inc/Legacy Middlewares/Third_Party/FreeRTOS/Source/include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F Drivers/CMSIS/Device/ST/STM32H7xx/Include Drivers/CMSIS/Include Middlewares/ST/ARM/DSP/Inc
+Middlewares/Third_Party/SEGGER/RTT
+Middlewares/Third_Party/SEGGER/Config
+user/bsp/usart
+user/bsp/log
+user/bsp/spi
+user/bsp/pwm
+user/bsp/tim
+user/bsp/can
+user/bsp/adc
+user/bsp/iic
+user/bsp/gpio
+user/modules/rectrl
+user/modules/led
+user/modules/callback
+user/modules/bmi088
+user/app/task
 
-User/BSP/uart
-User/MODULE/rectrl
-User/MODULE/led
-User/MODULE/callback
-User/MODULE/bmi088
-User/APP/task
 )
 
 add_definitions(-DDEBUG -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx)
 
 file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 
-"User/BSP/uart/*.*"
-"User/MODULE/rectrl/*.*"
-"User/MODULE/led/*.*"
-"User/MODULE/callback/*.*"
-"User/MODULE/bmi088/*.*"
-"User/APP/task/*.*"
+"Middlewares/Third_Party/SEGGER/Config*.*"
+"Middlewares/Third_Party/SEGGER/RTT*.*"
+"user/bsp/usart/*.*"
+"user/bsp/log/*.*"
+"user/bsp/spi/*.*"
+"user/bsp/pwm/*.*"
+"user/bsp/tim/*.*"
+"user/bsp/can/*.*"
+"user/bsp/adc/*.*"
+"user/bsp/iic/*.*"
+"user/bsp/gpio/*.*"
+"user/modules/rectrl/*.*"
+"user/modules/led/*.*"
+"user/modules/callback/*.*"
+"user/modules/bmi088/*.*"
+"user/app/task/*.*"
+
 )
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32H723VGTX_FLASH.ld)

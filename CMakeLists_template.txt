@@ -49,25 +49,46 @@ else ()
 endif ()
 
 include_directories(${includes}
+Middlewares/Third_Party/SEGGER/RTT
+Middlewares/Third_Party/SEGGER/Config
+user/bsp/usart
+user/bsp/log
+user/bsp/spi
+user/bsp/pwm
+user/bsp/tim
+user/bsp/can
+user/bsp/adc
+user/bsp/iic
+user/bsp/gpio
+user/modules/rectrl
+user/modules/led
+user/modules/callback
+user/modules/bmi088
+user/app/task
 
-User/BSP/uart
-User/MODULE/rectrl
-User/MODULE/led
-User/MODULE/callback
-User/MODULE/bmi088
-User/APP/task
 )
 
 add_definitions(${defines})
 
 file(GLOB_RECURSE SOURCES ${sources}
 
-"User/BSP/uart/*.*"
-"User/MODULE/rectrl/*.*"
-"User/MODULE/led/*.*"
-"User/MODULE/callback/*.*"
-"User/MODULE/bmi088/*.*"
-"User/APP/task/*.*"
+"Middlewares/Third_Party/SEGGER/Config*.*"
+"Middlewares/Third_Party/SEGGER/RTT*.*"
+"user/bsp/usart/*.*"
+"user/bsp/log/*.*"
+"user/bsp/spi/*.*"
+"user/bsp/pwm/*.*"
+"user/bsp/tim/*.*"
+"user/bsp/can/*.*"
+"user/bsp/adc/*.*"
+"user/bsp/iic/*.*"
+"user/bsp/gpio/*.*"
+"user/modules/rectrl/*.*"
+"user/modules/led/*.*"
+"user/modules/callback/*.*"
+"user/modules/bmi088/*.*"
+"user/app/task/*.*"
+
 )
 
 set(LINKER_SCRIPT $${CMAKE_SOURCE_DIR}/${linkerScript})
