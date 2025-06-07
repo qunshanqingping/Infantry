@@ -23,6 +23,14 @@
 /* Private defines -----------------------------------------------------------*/
 #define BUFFER_INDEX 0
 
+/* Private functions prototypes ----------------------------------------------*/
+/**
+ *
+ * @return 当前系统时间戳ms
+ */
+uint32_t getCurrentTime(void);
+
+
 /* Private macro -------------------------------------------------------------*/
 
 #define SYS_MS getCurrentTime()
@@ -31,13 +39,13 @@
  * @brief 日志功能原型,供下面的LOGINFO,LOGWARNING,LOGERROR等使用
  *
  */
-#define LOG_PROTO(type, color, format, ...)                                                                       \
-    SEGGER_RTT_printf(BUFFER_INDEX,                                                                               \
-                      "%s"                                                                                        \
-                      "[%02d:%03d:%03d]"                                                                          \
-                      "%s" format "\r\n%s",                                                                       \
-                      color, SYS_MS / 1000 / 60, SYS_MS / 1000 % 60, SYS_MS % 1000, \
-                      type, ##__VA_ARGS__, RTT_CTRL_RESET)
+#define LOG_PROTO(type, color, format, ...)                                                              \
+    SEGGER_RTT_printf(BUFFER_INDEX,                                                                      \
+                      "%s"                                                                               \
+                      "[%02d:%03d:%03d]"                                                                 \
+                      "%s" format "\r\n%s",                                                              \
+                      color, SYS_MS / 1000 / 60, SYS_MS / 1000 % 60, SYS_MS % 1000, type, ##__VA_ARGS__, \
+                      RTT_CTRL_RESET)
 
 /**
  * @brief 清屏
@@ -50,14 +58,23 @@
  */
 #define LOG(format, ...) LOG_PROTO("", "", format, ##__VA_ARGS__)
 
-// information level
+/**
+ * @brief 信号输出 绿色
+ * @param format 输出内容
+ */
 #define LOGINFO(format, ...) LOG_PROTO("I:", RTT_CTRL_TEXT_BRIGHT_GREEN, format, ##__VA_ARGS__)
-// warning level
-#define LOGWARNING(format, ...) LOG_PROTO("W:", RTT_CTRL_TEXT_BRIGHT_YELLOW, format, ##__VA_ARGS__)
-// error level
-#define LOGERROR(format, ...) LOG_PROTO("E:", RTT_CTRL_TEXT_BRIGHT_RED, format, ##__VA_ARGS__)
 
-/* Private functions prototypes ----------------------------------------------*/
+/**
+ * @brief 警告输出 黄色
+ * @param format 输出内容
+ */
+#define LOGWARNING(format, ...) LOG_PROTO("W:", RTT_CTRL_TEXT_BRIGHT_YELLOW, format, ##__VA_ARGS__)
+
+/**
+ * @brief 错误输出 红色
+ * @param format 输出内容
+ */
+#define LOGERROR(format, ...) LOG_PROTO("E:", RTT_CTRL_TEXT_BRIGHT_RED, format, ##__VA_ARGS__)
 
 
 /* Exported variables ---------------------------------------------------------*/

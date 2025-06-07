@@ -32,10 +32,6 @@
 
 
 /* Exported functions prototypes ---------------------------------------------*/
-/**
- *
- * @return 当前系统时间戳ms
- */
-uint32_t getCurrentTime(void);
+
 
 #endif /* BSP_TIM_H */

@@ -9,7 +9,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include <cmsis_os.h>
+
 #include <stdint.h>
 /* Private includes -----------------------------------------------------------*/
 #include "bsp_tim.h"
@@ -21,13 +21,3 @@
 
 
 /* Exported functions prototypes ---------------------------------------------*/
-/**
- *
- * @return 当前系统时间戳ms
- */
-uint32_t getCurrentTime(void)
-{
-    TickType_t ticks = xTaskGetTickCount();
-    uint32_t milliSeconds = ticks * portTICK_PERIOD_MS;
-    return milliSeconds;
-}
