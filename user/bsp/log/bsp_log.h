@@ -59,11 +59,22 @@ uint32_t getCurrentTime(void);
 #define LOG(format, ...) LOG_PROTO("", "", format, ##__VA_ARGS__)
 
 /**
+ * @brief 信号输出 黑色
+ * @param format 输出内容
+ */
+#define LOGINFO(format, ...) LOG_PROTO("I:", RTT_CTRL_TEXT_BRIGHT_BLACK, format, ##__VA_ARGS__)
+
+/**
  * @brief 信号输出 绿色
  * @param format 输出内容
  */
-#define LOGINFO(format, ...) LOG_PROTO("I:", RTT_CTRL_TEXT_BRIGHT_GREEN, format, ##__VA_ARGS__)
+#define LOGPASS(format, ...) LOG_PROTO("P:", RTT_CTRL_TEXT_BRIGHT_GREEN, format, ##__VA_ARGS__)
 
+/**
+ * @brief 信号输出 蓝色
+ * @param format 输出内容
+ */
+#define LOGDEBUG(format, ...) LOG_PROTO("D:", RTT_CTRL_TEXT_BRIGHT_BLUE, format, ##__VA_ARGS__)
 /**
  * @brief 警告输出 黄色
  * @param format 输出内容

@@ -1,12 +1,16 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>cplt</w>
       <w>exti</w>
       <w>gpioa</w>
       <w>gpiob</w>
+      <w>hspi</w>
       <w>huart</w>
       <w>loginfo</w>
+      <w>logpass</w>
       <w>logwarning</w>
+      <w>txrx</w>
     </words>
   </dictionary>
 </component>

@@ -61,7 +61,7 @@ user/bsp/can
 user/bsp/adc
 user/bsp/iic
 user/bsp/gpio
-user/modules/rectrl
+user/modules/ws2812
 user/modules/led
 user/modules/callback
 user/modules/bmi088
@@ -84,7 +84,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 "user/bsp/adc/*.*"
 "user/bsp/iic/*.*"
 "user/bsp/gpio/*.*"
-"user/modules/rectrl/*.*"
+"user/modules/ws2812/*.*"
 "user/modules/led/*.*"
 "user/modules/callback/*.*"
 "user/modules/bmi088/*.*"

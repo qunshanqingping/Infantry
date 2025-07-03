@@ -83,28 +83,28 @@ typedef struct
  * @param GPIO_config
  * @return GPIOInstance*
  */
-GPIOInstance *GPIORegister(GPIO_Init_Config_s *GPIO_config);
+GPIOInstance *GPIORegister(const GPIO_Init_Config_s *GPIO_config);
 
 /**
  * @brief GPIO API,切换GPIO电平
  *
  * @param _instance
  */
-void GPIOToggle(GPIOInstance *_instance);
+void GPIOToggle(const GPIOInstance *_instance);
 
 /**
  * @brief 设置GPIO电平
  *
  * @param _instance
  */
-void GPIOSet(GPIOInstance *_instance);
+void GPIOSet(const GPIOInstance *_instance);
 
 /**
  * @brief 复位GPIO电平
  *
  * @param _instance
  */
-void GPIOReset(GPIOInstance *_instance);
+void GPIOReset(const GPIOInstance *_instance);
 
 /**
  * @brief 读取GPIO电平
@@ -112,6 +112,6 @@ void GPIOReset(GPIOInstance *_instance);
  * @param _instance
  * @return GPIO_PinState
  */
-GPIO_PinState GPIORead(GPIOInstance *_instance);
+GPIO_PinState GPIORead(const GPIOInstance *_instance);
 
 #endif /* BSP_GPIO_H */

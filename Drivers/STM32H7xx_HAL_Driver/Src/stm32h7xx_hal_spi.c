@@ -3156,7 +3156,7 @@ __weak void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) /* Derogation MISRAC
   *               the configuration information for SPI module.
   * @retval None
   */
-__weak void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) /* Derogation MISRAC2012-Rule-8.13 */
+__weak void HAL_SPI_RxCpltCallback(const SPI_HandleTypeDef *hspi) /* Derogation MISRAC2012-Rule-8.13 */
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hspi);
@@ -3172,7 +3172,7 @@ __weak void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) /* Derogation MISRAC
   *               the configuration information for SPI module.
   * @retval None
   */
-__weak void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) /* Derogation MISRAC2012-Rule-8.13 */
+__weak void HAL_SPI_TxRxCpltCallback(const SPI_HandleTypeDef *hspi) /* Derogation MISRAC2012-Rule-8.13 */
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hspi);

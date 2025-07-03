@@ -41,7 +41,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     }
 }
 
-GPIOInstance *GPIORegister(GPIO_Init_Config_s *GPIO_config)
+GPIOInstance *GPIORegister(const GPIO_Init_Config_s *GPIO_config)
 {
     GPIOInstance *ins = (GPIOInstance *)malloc(sizeof(GPIOInstance));
     memset(ins, 0, sizeof(GPIOInstance));
@@ -62,10 +62,10 @@ GPIOInstance *GPIORegister(GPIO_Init_Config_s *GPIO_config)
  * @param _instance
  */
 
-void GPIOToggle(GPIOInstance *_instance) { HAL_GPIO_TogglePin(_instance->GPIOx, _instance->GPIO_Pin); }
+void GPIOToggle(const GPIOInstance *_instance) { HAL_GPIO_TogglePin(_instance->GPIOx, _instance->GPIO_Pin); }
 
-void GPIOSet(GPIOInstance *_instance) { HAL_GPIO_WritePin(_instance->GPIOx, _instance->GPIO_Pin, GPIO_PIN_SET); }
+void GPIOSet(const GPIOInstance *_instance) { HAL_GPIO_WritePin(_instance->GPIOx, _instance->GPIO_Pin, GPIO_PIN_SET); }
 
-void GPIOReset(GPIOInstance *_instance) { HAL_GPIO_WritePin(_instance->GPIOx, _instance->GPIO_Pin, GPIO_PIN_RESET); }
+void GPIOReset(const GPIOInstance *_instance) { HAL_GPIO_WritePin(_instance->GPIOx, _instance->GPIO_Pin, GPIO_PIN_RESET); }
 
-GPIO_PinState GPIORead(GPIOInstance *_instance) { return HAL_GPIO_ReadPin(_instance->GPIOx, _instance->GPIO_Pin); }
+GPIO_PinState GPIORead(const GPIOInstance *_instance) { return HAL_GPIO_ReadPin(_instance->GPIOx, _instance->GPIO_Pin); }
