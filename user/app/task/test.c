@@ -11,9 +11,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include <cmsis_os.h>
 /* Private includes -----------------------------------------------------------*/
-#include "test.h"
 #include "bsp_log.h"
-#include "module_ws2812.h"
+#include "test.h"
+#include "ws2812.h"
 /* Private variables ---------------------------------------------------------*/
 
 
@@ -25,7 +25,6 @@ void startCmdTask(void const * argument)
     /* Infinite loop */
     for(;;)
     {
-        WS2812_Clear();
         LOGDEBUG("Hello World!");
         osDelay(100);
     }

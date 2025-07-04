@@ -17,27 +17,32 @@
 
 ******************************************************************************/
 
-#ifndef MODULE_WS2812_H
-#define MODULE_WS2812_H
+#ifndef WS2812_H
+#define WS2812_H
 #include <stdint.h>
 #include "bsp_spi.h"
-#define WS2812_SPI_UNIT     hspi6
+#include "bsp_gpio.h"
 typedef enum
 {
-    GREEN = 1,
-    BLUE = 2,
-    YELLOW = 3,
-    RED = 4,
-} color_e;
+    GREEN = 0,
+    BLUE = 1,
+    YELLOW = 2,
+    RED = 3,
+} WS2812_color_e;
 
-typedef struct ws2812_ins_temp
+typedef struct
 {
-    color_e color;
-    SPIInstance *spi_ins;
+    WS2812_color_e color;
+    SPIInstance *spi_tx;
+    GPIOInstance *gpio_tx;
 } WS2812Instance;
 
-void WS2812_Init(void);
-void WS2812_SetColor(uint8_t r, uint8_t g, uint8_t b);
-void WS2812_Error(void);
-void WS2812_Clear(void);
-#endif //MODULE_WS2812_H
+typedef struct
+{
+    WS2812_color_e color_config;
+    SPI_Init_Config_s *spi_config_tx;
+    GPIO_Init_Config_s *gpio_config_tx;
+} WS2812_Init_Config_s;
+WS2812Instance *WS2812Register(WS2812_Init_Config_s *config);
+void WS2812_Publish(WS2812Instance *ws2812_instance,uint8_t update_color);
+#endif //WS2812_H

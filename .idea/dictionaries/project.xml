@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>cplt</w>
+      <w>cyccnt</w>
       <w>exti</w>
       <w>gpioa</w>
       <w>gpiob</w>
@@ -10,6 +11,9 @@
       <w>loginfo</w>
       <w>logpass</w>
       <w>logwarning</w>
+      <w>rount</w>
+      <w>tickstart</w>
+      <w>timelinef</w>
       <w>txrx</w>
     </words>
   </dictionary>
