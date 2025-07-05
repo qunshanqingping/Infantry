@@ -53,7 +53,7 @@ include_directories(Core/Inc Drivers/STM32H7xx_HAL_Driver/Inc Drivers/STM32H7xx_
     Middlewares/Third_Party/SEGGER/RTT
     Middlewares/Third_Party/SEGGER/Config
     user/bsp/usart
-    user/bsp/log
+        User/sys/log
     user/bsp/spi
     user/bsp/dwt
     user/bsp/pwm
@@ -62,7 +62,7 @@ include_directories(Core/Inc Drivers/STM32H7xx_HAL_Driver/Inc Drivers/STM32H7xx_
     user/bsp/adc
     user/bsp/iic
     user/bsp/gpio
-    user/modules/ws2812
+        User/sys/ws2812
     user/modules/led
     user/modules/callback
     user/modules/bmi088
@@ -76,7 +76,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 
         "Middlewares/Third_Party/SEGGER/Config*.*"
         "Middlewares/Third_Party/SEGGER/RTT*.*"
-        "user/bsp/log/*.*"
+        "User/sys/log/*.*"
         "user/bsp/dwt/*.*"
         "user/bsp/spi/*.*"
         "user/bsp/pwm/*.*"
@@ -85,7 +85,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
         "user/bsp/adc/*.*"
         "user/bsp/iic/*.*"
         "user/bsp/gpio/*.*"
-        "user/modules/ws2812/*.*"
+        "User/sys/ws2812/*.*"
         "user/modules/led/*.*"
         "user/modules/callback/*.*"
         "user/modules/bmi088/*.*"

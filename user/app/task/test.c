@@ -13,6 +13,8 @@
 /* Private includes -----------------------------------------------------------*/
 #include "bsp_log.h"
 #include "test.h"
+
+#include "spi.h"
 #include "ws2812.h"
 /* Private variables ---------------------------------------------------------*/
 
@@ -21,11 +23,12 @@
 void startCmdTask(void const * argument)
 {
     /* USER CODE BEGIN startCmdTask */
-
+    WS2812_Publish(BLUE);
     /* Infinite loop */
     for(;;)
     {
         LOGDEBUG("Hello World!");
+
         osDelay(100);
     }
     /* USER CODE END startCmdTask */
