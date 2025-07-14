@@ -32,9 +32,18 @@ typedef enum
 
 typedef struct
 {
-    SPI_HandleTypeDef *spi_handle;
+    SpiInstance    spi_instance;
     WS2812_color_e color; // 当前颜色
-} WS2812Instance;
+} Ws2812Instance;
 
+typedef struct
+{
+    SpiInstance    spi_instance;
+    WS2812_color_e color; // 当前颜色
+} Ws2812Config;
+/*
+ * 注册一个灯
+ */
+Ws2812Instance * ModWs2812Register(Ws2812Config *config);
 void WS2812_Publish(uint8_t update_color);
 #endif //WS2812_H

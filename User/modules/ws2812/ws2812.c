@@ -48,7 +48,7 @@ static uint8_t ColorTxBuf[4][24] = {
          0x60, 0x60, 0x60, 0x78, 0x60, 0x60, 0x60, 0x78, // R: 0x11
          0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60  // B: 0x00
         },
-    {/*红色*/
+    {/*RED*/
         0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, // G: 0x00
         0x60, 0x60, 0x78, 0x60, 0x60, 0x60, 0x78, 0x60, // R: 0x11
         0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60  // B: 0x00
@@ -57,21 +57,25 @@ static uint8_t ColorTxBuf[4][24] = {
 static uint8_t res1 = 0;
 static uint8_t res2[100]={0};
 
-static WS2812Instance ws2812_instance =
+Ws2812Instance * ModWs2812Register(Ws2812Config *config)
 {
-    .color = GREEN, // 设置默认颜色为绿色
-    .spi_handle = &hspi6,
-};
 
-/*----------------------------------------------*
- * 外部函数原型说明                             *
- *----------------------------------------------*/
-
-void WS2812_Publish(uint8_t update_color)
-{
-    ws2812_instance.color = update_color;
-    HAL_SPI_Transmit(ws2812_instance.spi_handle, &res1,0,1000);
-    while (ws2812_instance.spi_handle->State != HAL_SPI_STATE_READY){}
-    HAL_SPI_Transmit(ws2812_instance.spi_handle, ColorTxBuf[ws2812_instance.color],24,1000);
-    HAL_SPI_Transmit(ws2812_instance.spi_handle, &res2[0],100,1000);
 }
+// static WS2812Instance ws2812_instance =
+// {
+//     .color = GREEN, // 设置默认颜色为绿色
+//     .spi_handle = &hspi6,
+// };
+//
+// /*----------------------------------------------*
+//  * 外部函数原型说明                             *
+//  *----------------------------------------------*/
+//
+// void WS2812_Publish(uint8_t update_color)
+// {
+//     ws2812_instance.color = update_color;
+//     HAL_SPI_Transmit(ws2812_instance.spi_handle, &res1,0,1000);
+//     while (ws2812_instance.spi_handle->State != HAL_SPI_STATE_READY){}
+//     HAL_SPI_Transmit(ws2812_instance.spi_handle, ColorTxBuf[ws2812_instance.color],24,1000);
+//     HAL_SPI_Transmit(ws2812_instance.spi_handle, &res2[0],100,1000);
+// }

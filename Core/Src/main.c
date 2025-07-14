@@ -30,7 +30,6 @@
 /* USER CODE BEGIN Includes */
 #include "bsp_log.h"
 #include "bsp_spi.h"
-#include "ws2812.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -105,7 +104,7 @@ int main(void)
   MX_FDCAN1_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-    BspLogInit();
+    SysLogInit();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

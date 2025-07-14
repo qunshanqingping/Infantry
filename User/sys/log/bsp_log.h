@@ -28,12 +28,12 @@
  *
  * @return 当前系统时间戳ms
  */
-uint32_t getCurrentTime(void);
+uint32_t GetCurrentTime(void);
 
 
 /* Private macro -------------------------------------------------------------*/
 
-#define SYS_MS getCurrentTime()
+#define SYS_MS GetCurrentTime()
 
 /**
  * @brief 日志功能原型,供下面的LOGINFO,LOGWARNING,LOGERROR等使用
@@ -95,5 +95,5 @@ uint32_t getCurrentTime(void);
 /**
  * @brief 日志系统初始化，这里为了统一bsp层，重新封装
  */
-void BspLogInit();
+void SysLogInit();
 #endif /* BSP_LOG_H */

@@ -4,6 +4,8 @@
       <w>cplt</w>
       <w>cyccnt</w>
       <w>exti</w>
+      <w>ffunction</w>
+      <w>fmessage</w>
       <w>gpioa</w>
       <w>gpiob</w>
       <w>hspi</w>
@@ -11,10 +13,18 @@
       <w>loginfo</w>
       <w>logpass</w>
       <w>logwarning</w>
+      <w>mcpu</w>
+      <w>mfloat</w>
+      <w>mfpu</w>
+      <w>mthumb</w>
+      <w>obinary</w>
+      <w>ofast</w>
+      <w>oihex</w>
       <w>rount</w>
       <w>tickstart</w>
       <w>timelinef</w>
       <w>txrx</w>
+      <w>usart</w>
     </words>
   </dictionary>
 </component>

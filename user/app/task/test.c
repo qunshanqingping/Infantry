@@ -15,7 +15,6 @@
 #include "test.h"
 
 #include "spi.h"
-#include "ws2812.h"
 /* Private variables ---------------------------------------------------------*/
 
 
@@ -23,7 +22,6 @@
 void startCmdTask(void const * argument)
 {
     /* USER CODE BEGIN startCmdTask */
-    WS2812_Publish(BLUE);
     /* Infinite loop */
     for(;;)
     {
