@@ -26,6 +26,9 @@
 #include "spi.h"
 
 #include <stdlib.h>
+
+#include "basic_math.h"
+#include "sys_log.h"
 /*----------------------------------------------*
  * 宏定义                                       *
  *----------------------------------------------*/
@@ -59,7 +62,19 @@ static uint8_t res2[100]={0};
 
 Ws2812Instance * ModWs2812Register(Ws2812Config *config)
 {
+    Ws2812Instance *ws2812_instance = (Ws2812Instance *)user_malloc(sizeof(Ws2812Instance));
+    memset(ws2812_instance,0,sizeof(Ws2812Instance));
+    if (ws2812_instance == NULL)
+    {
+        user_free(ws2812_instance);
+        LOGERROR("WS2812 instance memory allocation failed! Please check your memory.");
+        while (1); // 内存分配失败,请检查内存是否足够
+    }
+    ws2812_instance->color = config->color;
+    ws2812_instance->spi_instance = BspSpiRegister(&config->spi_config);
 
+
+    return ws2812_instance;
 }
 // static WS2812Instance ws2812_instance =
 // {

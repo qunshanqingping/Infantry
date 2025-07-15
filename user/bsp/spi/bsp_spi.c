@@ -1,7 +1,6 @@
 #include "bsp_spi.h"
-#include "memory.h"
-#include "stdlib.h"
-
+#include "basic_math.h"
+#include "sys_log.h"
 /* 所有的spi instance保存于此,用于callback时判断中断来源*/
 static SpiInstance *spi_instance[BSP_SPI_DEVICE_CNT] = {NULL};
 static uint8_t idx = 0;                         // 配合中断以及初始化
@@ -11,10 +10,17 @@ SpiInstance * BspSpiRegister(SpiConfig *conf)
 {
     if (idx >= MX_SPI_BUS_SLAVE_CNT) // 超过最大实例数
     {
+        LOGERROR("SPI instance count exceeds limit! Please check your configuration.");
         while (1);
     }
-    SpiInstance *instance = (SpiInstance *)malloc(sizeof(SpiInstance));
+    SpiInstance *instance = (SpiInstance *)user_malloc(sizeof(SpiInstance));
     memset(instance, 0, sizeof(SpiInstance));
+    if (instance == NULL)
+    {
+        user_free(instance);
+        LOGERROR("SPI instance memory allocation failed! Please check your memory.");
+        while (1); // 内存分配失败,请检查内存是否足够
+    }
 
     instance->hspi_handle = conf->hspi_handle;
 

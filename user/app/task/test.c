@@ -11,7 +11,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <cmsis_os.h>
 /* Private includes -----------------------------------------------------------*/
-#include "bsp_log.h"
+#include "sys_log.h"
 #include "test.h"
 
 #include "spi.h"

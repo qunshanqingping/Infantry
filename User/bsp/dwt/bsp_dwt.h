@@ -6,7 +6,7 @@
 #define BSP_DWT_H
 #include "main.h"
 #include "stdint.h"
-#include "bsp_log.h"
+#include "sys_log.h"
 
 typedef struct
 {

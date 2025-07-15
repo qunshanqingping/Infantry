@@ -28,8 +28,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "bsp_log.h"
 #include "bsp_spi.h"
+#include "sys_log.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

@@ -32,13 +32,13 @@ typedef enum
 
 typedef struct
 {
-    SpiInstance    spi_instance;
+    SpiInstance *spi_instance;
     WS2812_color_e color; // 当前颜色
 } Ws2812Instance;
 
 typedef struct
 {
-    SpiInstance    spi_instance;
+    SpiConfig    spi_config;
     WS2812_color_e color; // 当前颜色
 } Ws2812Config;
 /*

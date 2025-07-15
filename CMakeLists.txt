@@ -54,6 +54,7 @@ Middlewares/Third_Party/SEGGER/RTT
 Middlewares/Third_Party/SEGGER/Config
 user/bsp/usart
 user/sys/log
+user/sys/algorithm
 user/bsp/spi
 user/bsp/pwm
 user/bsp/tim
@@ -77,6 +78,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 "Middlewares/Third_Party/SEGGER/RTT*.*"
 "user/bsp/usart/*.*"
 "user/sys/log/*.*"
+"user/sys/algorithm/*.*"
 "user/bsp/spi/*.*"
 "user/bsp/pwm/*.*"
 "user/bsp/tim/*.*"
