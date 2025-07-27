@@ -8,6 +8,7 @@
       <w>fmessage</w>
       <w>gpioa</w>
       <w>gpiob</w>
+      <w>hdma</w>
       <w>hspi</w>
       <w>huart</w>
       <w>loginfo</w>

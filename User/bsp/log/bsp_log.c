@@ -1,5 +1,5 @@
 #include <cmsis_os.h>
-  #include "sys_log.h"
+  #include "bsp_log.h"
 
 /**
  * @brief 获取当前系统时间戳（毫秒）
@@ -15,7 +15,7 @@
   /**
    * @brief 日志系统初始化
    */
-  void SysLogInit(void)
+  void log_init(void)
   {
       SEGGER_RTT_Init();
   }

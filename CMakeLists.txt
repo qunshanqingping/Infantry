@@ -53,8 +53,9 @@ include_directories(Core/Inc Drivers/STM32H7xx_HAL_Driver/Inc Drivers/STM32H7xx_
 Middlewares/Third_Party/SEGGER/RTT
 Middlewares/Third_Party/SEGGER/Config
 user/bsp/usart
-user/sys/log
+user/bsp/log
 user/sys/algorithm
+user/bsp/dwt
 user/bsp/spi
 user/bsp/pwm
 user/bsp/tim
@@ -65,7 +66,7 @@ user/bsp/gpio
 user/modules/ws2812
 user/modules/led
 user/modules/callback
-user/modules/bmi088
+user/modules/imu
 user/app/task
 
 )
@@ -76,8 +77,9 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 
 "Middlewares/Third_Party/SEGGER/Config*.*"
 "Middlewares/Third_Party/SEGGER/RTT*.*"
+"user/bsp/dwt/*.*"
 "user/bsp/usart/*.*"
-"user/sys/log/*.*"
+"user/bsp/log/*.*"
 "user/sys/algorithm/*.*"
 "user/bsp/spi/*.*"
 "user/bsp/pwm/*.*"
@@ -89,7 +91,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 "user/modules/ws2812/*.*"
 "user/modules/led/*.*"
 "user/modules/callback/*.*"
-"user/modules/bmi088/*.*"
+"user/modules/imu/*.*"
 "user/app/task/*.*"
 
 )

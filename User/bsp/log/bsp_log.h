@@ -95,5 +95,5 @@ uint32_t GetCurrentTime(void);
 /**
  * @brief 日志系统初始化，这里为了统一bsp层，重新封装
  */
-void SysLogInit();
+void log_init();
 #endif /* BSP_LOG_H */

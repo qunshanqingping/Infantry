@@ -1,16 +1,15 @@
 #include "bsp_spi.h"
 #include "basic_math.h"
-#include "sys_log.h"
+#include "stdbool.h"
 /* 所有的spi instance保存于此,用于callback时判断中断来源*/
 static SpiInstance *spi_instance[BSP_SPI_DEVICE_CNT] = {NULL};
 static uint8_t idx = 0;                         // 配合中断以及初始化
 uint8_t SPIDeviceOnGoing[BSP_SPI_DEVICE_CNT] = {1}; // 用于判断当前spi是否正在传输,防止多个模块同时使用一个spi总线 (0: 正在传输, 1: 未传输)
 
-SpiInstance * BspSpiRegister(SpiConfig *conf)
+SpiInstance * bsp_spi_register(SpiConfig *conf)
 {
     if (idx >= MX_SPI_BUS_SLAVE_CNT) // 超过最大实例数
     {
-        LOGERROR("SPI instance count exceeds limit! Please check your configuration.");
         while (1);
     }
     SpiInstance *instance = (SpiInstance *)user_malloc(sizeof(SpiInstance));
@@ -18,7 +17,6 @@ SpiInstance * BspSpiRegister(SpiConfig *conf)
     if (instance == NULL)
     {
         user_free(instance);
-        LOGERROR("SPI instance memory allocation failed! Please check your memory.");
         while (1); // 内存分配失败,请检查内存是否足够
     }
 
@@ -62,7 +60,28 @@ SpiInstance * BspSpiRegister(SpiConfig *conf)
     return instance;
 }
 
-void BspSpiTransmit(SpiInstance *spi_ins, uint8_t *ptr_data, uint8_t len)
+void bsp_spi_tx_reset(SpiInstance *spi_ins, uint8_t *tx_buffer, uint8_t tx_len)
+{
+    if (spi_ins == NULL || spi_ins->hspi_handle == NULL)
+    {
+        while (1);
+    }
+    spi_ins->tx_len = tx_len;
+    spi_ins->tx_buffer = tx_buffer;
+    spi_ins->tx_len = tx_len;
+}
+
+void bsp_spi_rx_reset(SpiInstance *spi_ins, uint8_t *rx_buffer, uint8_t rx_len)
+{
+    if (spi_ins == NULL || spi_ins->hspi_handle == NULL)
+    {
+        while (1);
+    }
+    spi_ins->rx_buffer = rx_buffer;
+    spi_ins->rx_len = rx_len;
+}
+
+void bsp_spi_transmit(SpiInstance *spi_ins)
 {
     // 拉低片选,开始传输(选中从机)
     if (spi_ins->cs_port != NULL && spi_ins->cs_pin != 0)
@@ -72,15 +91,15 @@ void BspSpiTransmit(SpiInstance *spi_ins, uint8_t *ptr_data, uint8_t len)
     switch (spi_ins->work_mode)
     {
     case BLOCK_MODE:
-        HAL_SPI_Transmit(spi_ins->hspi_handle, ptr_data, len, 1000); // 默认1000ms超时
+        HAL_SPI_Transmit(spi_ins->hspi_handle,spi_ins->tx_buffer, spi_ins->tx_len, 1000); // 默认1000ms超时
         // 阻塞模式不会调用回调函数,传输完成后直接拉高片选结束
         HAL_GPIO_WritePin(spi_ins->cs_port, spi_ins->cs_pin, GPIO_PIN_SET);
         break;
     case IT_MODE:
-        HAL_SPI_Transmit_IT(spi_ins->hspi_handle, ptr_data, len);
+        HAL_SPI_Transmit_IT(spi_ins->hspi_handle, spi_ins->tx_buffer, spi_ins->tx_len);
         break;
     case DMA_MODE:
-        HAL_SPI_Transmit_DMA(spi_ins->hspi_handle, ptr_data, len);
+        HAL_SPI_Transmit_DMA(spi_ins->hspi_handle, spi_ins->tx_buffer, spi_ins->tx_len);
         break;
     default:
         while (1)
@@ -89,3 +108,4 @@ void BspSpiTransmit(SpiInstance *spi_ins, uint8_t *ptr_data, uint8_t len)
         // error mode! 请查看是否正确设置模式，或出现指针越界导致模式被异常修改的情况
     }
 }
+

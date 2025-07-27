@@ -1,92 +1,123 @@
-//
-// Created by honor on 25-7-4.
-//
 
-#ifndef BSP_DWT_H
-#define BSP_DWT_H
-#include "main.h"
+/**
+ * @file bsp_dwt.h
+ * @brief DWT (Data Watchpoint and Trace) 模块 BSP 层头文件
+ * @author Adonis Jin
+ * @date 2025-7-27
+ */
+
+#ifndef __BSP_DWT_H
+#define __BSP_DWT_H
+
 #include "stdint.h"
-#include "sys_log.h"
 
-typedef struct
-{
-    uint32_t s;
-    uint16_t ms;
-    uint16_t us;
-} DWT_Time_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/**
- * @brief 该宏用于计算代码段执行时间,单位为秒/s,返回值为float类型
- *        首先需要创建一个float类型的变量,用于存储时间间隔
- *        计算得到的时间间隔同时还会通过RTT打印到日志终端,你也可以将你的dt变量添加到查看
- */
-#define TIME_ELAPSE(dt, code)                    \
-do                                           \
-{                                            \
-float tstart = DWT_GetTimeline_s();      \
-code;                                    \
-dt = DWT_GetTimeline_s() - tstart;       \
-LOGINFO("[DWT] " #dt " = %f s\r\n", dt); \
-} while (0)
+    /**
+     * @brief 系统时间结构体定义
+     */
+    typedef struct
+    {
+        uint32_t s;   // 秒
+        uint16_t ms;  // 毫秒
+        uint16_t us;  // 微秒
+    } DwtTime;
 
-/**
- * @brief 初始化DWT,传入参数为CPU频率,单位MHz
- *
- * @param CPU_Freq_mHz c板为168MHz,A板为180MHz，妙板240
- */
-void DWT_Init(uint32_t CPU_Freq_mHz);
+    /**
+     * @brief 初始化DWT（Data Watchpoint and Trace）模块
+     *
+     * 使能DWT CYCCNT计数器，并根据CPU频率设置相关变量。
+     *
+     * @param cpu_freq_mhz CPU频率（MHz）
+     */
+    void dwt_init(uint32_t cpu_freq_mhz);
 
-/**
- * @brief 获取两次调用之间的时间间隔,单位为秒/s
- *
- * @param cnt_last 上一次调用的时间戳
- * @return float 时间间隔,单位为秒/s
- */
-float DWT_GetDeltaT(uint32_t *cnt_last);
+    /**
+     * @brief 获取两个时间点之间的时间差(单精度浮点数)
+     *
+     * 计算从上次记录的时间点到当前时间点经过的时间，单位为秒
+     *
+     * @param cnt_last 指向记录上次计数值的指针
+     * @return float 时间差，单位为秒
+     */
+    float get_time_delta(uint32_t *cnt_last);
 
-/**
- * @brief 获取两次调用之间的时间间隔,单位为秒/s,高精度
- *
- * @param cnt_last 上一次调用的时间戳
- * @return double 时间间隔,单位为秒/s
- */
-double DWT_GetDeltaT64(uint32_t *cnt_last);
+    /**
+     * @brief 获取两个时间点之间的时间差(双精度浮点数)
+     *
+     * 计算从上次记录的时间点到当前时间点经过的时间，单位为秒
+     *
+     * @param cnt_last 指向记录上次计数值的指针
+     * @return double 时间差，单位为秒
+     */
+    double get_time_delta64(uint32_t *cnt_last);
 
-/**
- * @brief 获取当前时间,单位为秒/s,即初始化后的时间
- *
- * @return float 时间轴
- */
-float DWT_GetTimeline_s(void);
+    /**
+     * @brief 更新系统时间
+     *
+     * 根据DWT计数器的值更新系统时间结构体，包括秒、毫秒和微秒
+     */
+    void dwt_sys_time_update(void);
 
-/**
- * @brief 获取当前时间,单位为毫秒/ms,即初始化后的时间
- *
- * @return float
- */
-float DWT_GetTimeline_ms(void);
+    /**
+     * @brief 获取系统时间线(秒)
+     *
+     * 返回系统运行的总时间，单位为秒，精度到微秒
+     *
+     * @return float 系统运行时间，单位为秒
+     */
+    float dwt_get_time_line_s(void);
 
-/**
- * @brief 获取当前时间,单位为微秒/us,即初始化后的时间
- *
- * @return uint64_t
- */
-uint64_t DWT_GetTimeline_us(void);
+    /**
+     * @brief 获取系统时间线(毫秒)
+     *
+     * 返回系统运行的总时间，单位为毫秒，精度到微秒
+     *
+     * @return float 系统运行时间，单位为毫秒
+     */
+    float dwt_get_time_line_ms(void);
 
-/**
- * @brief DWT延时函数,单位为秒/s
- * @attention 该函数不受中断是否开启的影响,可以在临界区和关闭中断时使用
- * @note 禁止在__disable_irq()和__enable_irq()之间使用HAL_Delay()函数,应使用本函数
- *
- * @param Delay 延时时间,单位为秒/s
- */
-void DWT_Delay(float Delay);
+    /**
+     * @brief 获取系统时间线(微秒)
+     *
+     * 返回系统运行的总时间，单位为微秒
+     *
+     * @return uint32_t 系统运行时间，单位为微秒
+     */
+    uint32_t dwt_get_time_line_us(void);
 
-/**
- * @brief DWT更新时间轴函数,会被三个timeline函数调用
- * @attention 如果长时间不调用timeline函数,则需要手动调用该函数更新时间轴,否则CYCCNT溢出后定时和时间轴不准确
- */
-void DWT_SysTimeUpdate(void);
+    /**
+     * @brief 延时函数(秒)
+     *
+     * 使用DWT计数器实现精确延时，单位为秒
+     *
+     * @param delay_time 延时时间，单位为秒
+     */
+    void dwt_delay_s(uint32_t delay_time);
 
+    /**
+     * @brief 延时函数(毫秒)
+     *
+     * 使用DWT计数器实现精确延时，单位为毫秒
+     *
+     * @param delay_time 延时时间，单位为毫秒
+     */
+    void dwt_delay_ms(uint32_t delay_time);
 
-#endif //BSP_DWT_H
+    /**
+     * @brief 延时函数(微秒)
+     *
+     * 使用DWT计数器实现精确延时，单位为微秒
+     *
+     * @param delay_time 延时时间，单位为微秒
+     */
+    void dwt_delay_us(uint32_t delay_time);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __BSP_DWT_H */
+

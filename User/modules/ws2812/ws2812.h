@@ -44,6 +44,6 @@ typedef struct
 /*
  * 注册一个灯
  */
-Ws2812Instance * ModWs2812Register(Ws2812Config *config);
-void WS2812_Publish(uint8_t update_color);
+Ws2812Instance * mod_ws2812_register(Ws2812Config *config);
+void mod_ws2812_publish(Ws2812Instance *ws2812_instance,uint8_t update_color);
 #endif //WS2812_H

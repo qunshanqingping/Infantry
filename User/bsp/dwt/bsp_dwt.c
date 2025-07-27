@@ -1,128 +1,210 @@
 //
-// Created by honor on 25-7-4.
+// Created by honor on 25-7-27.
 //
 
 #include "bsp_dwt.h"
 #include "cmsis_os.h"
-
-static DWT_Time_t SysTime;
-static uint32_t CPU_FREQ_Hz, CPU_FREQ_Hz_ms, CPU_FREQ_Hz_us;
-static uint32_t CYCCNT_RountCount;
-static uint32_t CYCCNT_LAST;
-static uint64_t CYCCNT64;
+#include "main.h"
+// 定义系统时间结构体变量
+static DwtTime sys_time;
+// CPU频率相关变量：Hz、kHz、MHz单位下的频率值
+static uint32_t cpu_freq_hz, cpu_freq_hz_ms, cpu_freq_hz_us;
+// DWT计数器相关变量：
+// cyccnt_rount_count: 记录计数器溢出次数
+// cyccnt_last: 上次读取的计数值
+static uint32_t cyccnt_rount_count, cyccnt_last;
+// cyccnt64: 64位高精度计数器变量
+static uint64_t cyccnt64;
 
 /**
- * @brief 私有函数,用于检查DWT CYCCNT寄存器是否溢出,并更新CYCCNT_RountCount
- * @attention 此函数假设两次调用之间的时间间隔不超过一次溢出
+ * @brief 更新DWT计数器值
  *
- * @todo 更好的方案是为dwt的时间更新单独设置一个任务?
- *       不过,使用dwt的初衷是定时不被中断/任务等因素影响,因此该实现仍然有其存在的意义
- *
+ * 该函数用于更新CYCCNT计数器的状态，检测计数器是否溢出，
+ * 并更新相应的计数器变量。使用bit_blocker防止函数重入。
  */
-static void DWT_CNT_Update(void)
+static void dwt_cnt_update(void)
 {
-    static volatile uint8_t bit_locker = 0;
-    if (!bit_locker)
+    // 使用静态变量作为互斥标志，防止函数重入
+    static volatile uint8_t bit_blocker = 0;
+    if (!bit_blocker)
     {
-        bit_locker = 1;
+        bit_blocker = 1;
+        // 读取当前CYCCNT寄存器的值
         volatile uint32_t cnt_now = DWT->CYCCNT;
-        if (cnt_now < CYCCNT_LAST)
-            CYCCNT_RountCount++;
-
-        CYCCNT_LAST = DWT->CYCCNT;
-        bit_locker = 0;
+        // 如果当前值小于上次记录的值，说明计数器已溢出，增加溢出计数
+        if (cnt_now < cyccnt_last)
+        {
+            cyccnt_rount_count++;
+        }
+        // 更新上次记录的计数值
+        cyccnt_last = DWT->CYCCNT;
+        bit_blocker = 0;
     }
 }
 
-void DWT_Init(uint32_t CPU_Freq_mHz)
+/**
+ * @brief 初始化DWT（Data Watchpoint and Trace）模块
+ *
+ * 使能DWT CYCCNT计数器，并根据CPU频率设置相关变量。
+ *
+ * @param cpu_freq_mhz CPU频率（MHz）
+ */
+void dwt_init(uint32_t cpu_freq_mhz)
 {
-    /* 使能DWT外设 */
+    // 使能调试跟踪功能
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-
-    /* DWT CYCCNT寄存器计数清0 */
-    DWT->CYCCNT = (uint32_t)0u;
-
-    /* 使能Cortex-M DWT CYCCNT寄存器 */
+    // 清零CYCCNT计数器
+    DWT->CYCCNT = 0;
+    // 使能CYCCNT计数器
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+    // 根据输入的MHz频率计算不同单位下的频率值
+    cpu_freq_hz = cpu_freq_mhz * 1000000;     // Hz
+    cpu_freq_hz_ms = cpu_freq_mhz * 1000;     // 每毫秒计数
+    cpu_freq_hz_us = cpu_freq_mhz;            // 每微秒计数
 
-    CPU_FREQ_Hz = CPU_Freq_mHz * 1000000;
-    CPU_FREQ_Hz_ms = CPU_FREQ_Hz / 1000;
-    CPU_FREQ_Hz_us = CPU_FREQ_Hz / 1000000;
-    CYCCNT_RountCount = 0;
-
-    DWT_CNT_Update();
+    // 初始化计数器溢出计数为0
+    cyccnt_rount_count = 0;
+    // 更新计数器状态
+    dwt_cnt_update();
 }
 
-float DWT_GetDeltaT(uint32_t *cnt_last)
+/**
+ * @brief 获取两个时间点之间的时间差(单精度浮点数)
+ *
+ * 计算从上次记录的时间点到当前时间点经过的时间，单位为秒
+ *
+ * @param cnt_last 指向记录上次计数值的指针
+ * @return float 时间差，单位为秒
+ */
+float get_time_delta(uint32_t *cnt_last)
 {
     volatile uint32_t cnt_now = DWT->CYCCNT;
-    float dt = ((uint32_t)(cnt_now - *cnt_last)) / ((float)(CPU_FREQ_Hz));
+    float dt = ((uint32_t)(cnt_now-*cnt_last))/((float)(cpu_freq_hz));
     *cnt_last = cnt_now;
-
-    DWT_CNT_Update();
-
+    dwt_cnt_update();
     return dt;
 }
 
-double DWT_GetDeltaT64(uint32_t *cnt_last)
+/**
+ * @brief 获取两个时间点之间的时间差(双精度浮点数)
+ *
+ * 计算从上次记录的时间点到当前时间点经过的时间，单位为秒
+ *
+ * @param cnt_last 指向记录上次计数值的指针
+ * @return double 时间差，单位为秒
+ */
+double get_time_delta64(uint32_t *cnt_last)
 {
     volatile uint32_t cnt_now = DWT->CYCCNT;
-    double dt = ((uint32_t)(cnt_now - *cnt_last)) / ((double)(CPU_FREQ_Hz));
+    double dt = ((uint32_t)(cnt_now-*cnt_last))/((double)(cpu_freq_hz));
     *cnt_last = cnt_now;
-
-    DWT_CNT_Update();
-
+    dwt_cnt_update();
     return dt;
 }
 
-void DWT_SysTimeUpdate(void)
+/**
+ * @brief 更新系统时间
+ *
+ * 根据DWT计数器的值更新系统时间结构体，包括秒、毫秒和微秒
+ */
+void dwt_sys_time_update(void)
 {
     volatile uint32_t cnt_now = DWT->CYCCNT;
-    static uint64_t CNT_TEMP1, CNT_TEMP2, CNT_TEMP3;
-
-    DWT_CNT_Update();
-
-    CYCCNT64 = (uint64_t)CYCCNT_RountCount * (uint64_t)UINT32_MAX + (uint64_t)cnt_now;
-    CNT_TEMP1 = CYCCNT64 / CPU_FREQ_Hz;
-    CNT_TEMP2 = CYCCNT64 - CNT_TEMP1 * CPU_FREQ_Hz;
-    SysTime.s = CNT_TEMP1;
-    SysTime.ms = CNT_TEMP2 / CPU_FREQ_Hz_ms;
-    CNT_TEMP3 = CNT_TEMP2 - SysTime.ms * CPU_FREQ_Hz_ms;
-    SysTime.us = CNT_TEMP3 / CPU_FREQ_Hz_us;
+    static uint64_t cnt_temp1, cnt_temp2, cnt_temp3;
+    dwt_cnt_update();
+    // 构造64位计数值：溢出次数*最大值 + 当前计数值
+    cyccnt64 = (uint64_t)cyccnt_rount_count * (uint64_t)UINT32_MAX + (uint64_t)cnt_now;
+    // 计算秒数
+    cnt_temp1 = cyccnt64 / cpu_freq_hz;
+    cnt_temp2 = cyccnt64 - cnt_temp1 * cpu_freq_hz;
+    sys_time.s = cnt_temp1;
+    // 计算毫秒数
+    sys_time.ms = cnt_temp2 / cpu_freq_hz_ms;
+    cnt_temp3 = cnt_temp2 - cnt_temp3 * cpu_freq_hz_ms;
+    // 计算微秒数
+    sys_time.us = cnt_temp3 / cpu_freq_hz_us;
 }
 
-float DWT_GetTimeline_s(void)
+/**
+ * @brief 获取系统时间线(秒)
+ *
+ * 返回系统运行的总时间，单位为秒，精度到微秒
+ *
+ * @return float 系统运行时间，单位为秒
+ */
+float dwt_get_time_line_s(void)
 {
-    DWT_SysTimeUpdate();
-
-    float DWT_Timelinef32 = SysTime.s + SysTime.ms * 0.001f + SysTime.us * 0.000001f;
-
-    return DWT_Timelinef32;
+    dwt_sys_time_update();
+    float dwt_time_line_f32 = sys_time.s + (float)sys_time.ms / 1000.0f + (float)sys_time.us / 1000000.0f;
+    return dwt_time_line_f32;
 }
 
-float DWT_GetTimeline_ms(void)
+/**
+ * @brief 获取系统时间线(毫秒)
+ *
+ * 返回系统运行的总时间，单位为毫秒，精度到微秒
+ *
+ * @return float 系统运行时间，单位为毫秒
+ */
+float dwt_get_time_line_ms(void)
 {
-    DWT_SysTimeUpdate();
-
-    float DWT_Timelinef32 = SysTime.s * 1000 + SysTime.ms + SysTime.us * 0.001f;
-
-    return DWT_Timelinef32;
+    dwt_sys_time_update();
+    float dwt_time_line_f32 = sys_time.s * 1000.0f + sys_time.ms + (float)sys_time.us / 1000.0f;
+    return dwt_time_line_f32;
 }
 
-uint64_t DWT_GetTimeline_us(void)
+/**
+ * @brief 获取系统时间线(微秒)
+ *
+ * 返回系统运行的总时间，单位为微秒
+ *
+ * @return uint32_t 系统运行时间，单位为微秒
+ */
+uint32_t dwt_get_time_line_us(void)
 {
-    DWT_SysTimeUpdate();
-
-    uint64_t DWT_Timelinef32 = SysTime.s * 1000000 + SysTime.ms * 1000 + SysTime.us;
-
-    return DWT_Timelinef32;
+    dwt_sys_time_update();
+    uint64_t dwt_time_line_f64 = sys_time.s * 1000000 + sys_time.ms * 1000 + sys_time.us;
+    return dwt_time_line_f64;
 }
 
-void DWT_Delay(float Delay)
+/**
+ * @brief 延时函数(秒)
+ *
+ * 使用DWT计数器实现精确延时，单位为秒
+ *
+ * @param delay_time 延时时间，单位为秒
+ */
+void dwt_delay_s(uint32_t delay_time)
 {
-    uint32_t tickstart = DWT->CYCCNT;
-    float wait = Delay;
+    uint32_t tick_start = DWT->CYCCNT;
+    float wait_time = delay_time;
+    while ((DWT->CYCCNT - tick_start) < wait_time * cpu_freq_hz);
+}
 
-    while ((DWT->CYCCNT - tickstart) < wait * (float)CPU_FREQ_Hz)
-        ;
+/**
+ * @brief 延时函数(毫秒)
+ *
+ * 使用DWT计数器实现精确延时，单位为毫秒
+ *
+ * @param delay_time 延时时间，单位为毫秒
+ */
+void dwt_delay_ms(uint32_t delay_time)
+{
+    uint32_t tick_start = DWT->CYCCNT;
+    float wait_time = delay_time * 1000;
+    while ((DWT->CYCCNT - tick_start) < wait_time * cpu_freq_hz_ms);
+}
+
+/**
+ * @brief 延时函数(微秒)
+ *
+ * 使用DWT计数器实现精确延时，单位为微秒
+ *
+ * @param delay_time 延时时间，单位为微秒
+ */
+void dwt_delay_us(uint32_t delay_time)
+{
+    uint32_t tick_start = DWT->CYCCNT;
+    float wait_time = delay_time * 1000 * 1000;
+    while ((DWT->CYCCNT - tick_start) < wait_time * cpu_freq_hz_us);
 }

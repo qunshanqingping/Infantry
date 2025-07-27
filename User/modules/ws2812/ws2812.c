@@ -23,12 +23,12 @@
 #include "ws2812.h"
 #include <memory.h>
 #include <stdint.h>
-#include "spi.h"
+
 
 #include <stdlib.h>
 
 #include "basic_math.h"
-#include "sys_log.h"
+#include "bsp_log.h"
 /*----------------------------------------------*
  * 宏定义                                       *
  *----------------------------------------------*/
@@ -60,7 +60,7 @@ static uint8_t ColorTxBuf[4][24] = {
 static uint8_t res1 = 0;
 static uint8_t res2[100]={0};
 
-Ws2812Instance * ModWs2812Register(Ws2812Config *config)
+Ws2812Instance * mod_ws2812_register(Ws2812Config *config)
 {
     Ws2812Instance *ws2812_instance = (Ws2812Instance *)user_malloc(sizeof(Ws2812Instance));
     memset(ws2812_instance,0,sizeof(Ws2812Instance));
@@ -71,26 +71,19 @@ Ws2812Instance * ModWs2812Register(Ws2812Config *config)
         while (1); // 内存分配失败,请检查内存是否足够
     }
     ws2812_instance->color = config->color;
-    ws2812_instance->spi_instance = BspSpiRegister(&config->spi_config);
-
-
+    ws2812_instance->spi_instance = bsp_spi_register(&config->spi_config);
     return ws2812_instance;
 }
-// static WS2812Instance ws2812_instance =
-// {
-//     .color = GREEN, // 设置默认颜色为绿色
-//     .spi_handle = &hspi6,
-// };
-//
-// /*----------------------------------------------*
-//  * 外部函数原型说明                             *
-//  *----------------------------------------------*/
-//
-// void WS2812_Publish(uint8_t update_color)
-// {
-//     ws2812_instance.color = update_color;
-//     HAL_SPI_Transmit(ws2812_instance.spi_handle, &res1,0,1000);
-//     while (ws2812_instance.spi_handle->State != HAL_SPI_STATE_READY){}
-//     HAL_SPI_Transmit(ws2812_instance.spi_handle, ColorTxBuf[ws2812_instance.color],24,1000);
-//     HAL_SPI_Transmit(ws2812_instance.spi_handle, &res2[0],100,1000);
-// }
+
+
+void mod_ws2812_publish(Ws2812Instance *ws2812_instance,uint8_t update_color)
+{
+    if (ws2812_instance == NULL || ws2812_instance->spi_instance == NULL)
+    {
+        LOGERROR("WS2812 instance or SPI instance is NULL!");
+        return;
+    }
+    ws2812_instance->color = update_color;
+    bsp_spi_tx_reset(ws2812_instance->spi_instance,ColorTxBuf[ws2812_instance->color],24);
+    bsp_spi_transmit(ws2812_instance->spi_instance);
+}

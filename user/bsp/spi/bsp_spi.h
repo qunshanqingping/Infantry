@@ -52,9 +52,9 @@ typedef struct spi_ins_temp
     uint8_t CS_State;                        // 片选状态,用于中断模式下的片选控制
 
     uint8_t *rx_buffer;                      // 接收缓冲区,用于DMA或IT模式下接收数据
-    uint8_t rx_size;                         // 接收数据长度,用于DMA或IT模式下
+    uint8_t rx_len;                         // 接收数据长度,用于DMA或IT模式下
     uint8_t *tx_buffer;                      // 发送缓冲区,用于DMA或IT模式下发送数据
-    uint8_t tx_size;                         // 发送数据长度,用于DMA或IT模式下
+    uint8_t tx_len;                         // 发送数据长度,用于DMA或IT模式下
 
     void (*callback)(struct spi_ins_temp *); // 接收回调函数
     void *handle;                            // 模块指针,用于在回调函数中识别不同模块
@@ -84,5 +84,27 @@ typedef struct
  * @param conf 传入spi配置
  * @return SpiInstance* 返回一个spi实例指针,之后通过该指针操作spi外设
  */
-SpiInstance *BspSpiRegister(SpiConfig *conf);
+SpiInstance *bsp_spi_register(SpiConfig *conf);
+/**
+ * @brief 通过spi实例发送数据
+ *
+ * @param spi_ins spi实例指针
+ */
+void bsp_spi_transmit(SpiInstance *spi_ins);
+/**
+ * @brief 修改spi实例的发送缓冲区和发送长度
+ *
+ * @param spi_ins spi实例指针
+ * @param tx_buffer 发送缓冲区指针
+ * @param tx_len 发送长度
+ */
+void bsp_spi_tx_reset(SpiInstance *spi_ins, uint8_t *tx_buffer, uint8_t tx_len);
+/**
+ * @brief 修改spi实例的接收缓冲区和接收长度
+ *
+ * @param spi_ins spi实例指针
+ * @param rx_buffer 接收缓冲区指针
+ * @param rx_len 接收长度
+ */
+void bsp_spi_rx_reset(SpiInstance *spi_ins, uint8_t *rx_buffer, uint8_t rx_len);
 #endif
