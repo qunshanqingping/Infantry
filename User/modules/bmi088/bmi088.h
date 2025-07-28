@@ -1,8 +1,49 @@
-#ifndef BMI088DRIVER_H
-#define BMI088DRIVER_H
+//
+// Created by Adonis Jin on 25-7-27.
+//
 
-#include "stdint.h"
-#include "main.h"
+#ifndef BMI088_H
+#define BMI088_H
+#include "bsp_spi.h"
+#include "bsp_gpio.h"
+#include "bsp_dwt.h"
+typedef enum
+{
+    BMI088_BLOCK_PERIODIC_MODE = 0,//阻塞模式，周期性读取
+    BMI088_BLOCK_TRIGGER_MODE = 1,//阻塞模式，触发读取（中断）
+}Bmi088WorkMode;
+typedef enum
+{
+    BMI088_CALIBRATE_ONLINE_MODE = 0, // 初始化时进行标定：滤波器参数、传感器参数
+    BMI088_LOAD_PRE_CALI_MODE,        // 使用预设标定参数,
+} Bmi088CaliMode;
+#pragma pack(1)
+typedef struct
+{
+    float gyro[3];
+    float acc[3];
+    float temperature;
+}Bmi088Data;
+#pragma pack();
+
+typedef struct
+{
+    Bmi088WorkMode work_mode;
+    Bmi088CaliMode cali_mode;
+    SpiInstance *gyro;
+    SpiInstance *accel;
+    Bmi088Data data;
+    void(*module_spi_callback)(SpiInstance*);
+}BMI088Instance;
+
+typedef struct
+{
+    Bmi088WorkMode work_mode;
+    Bmi088CaliMode cali_mode;
+    SpiConfig *gyro;
+    SpiConfig *accel;
+};
+uint8_t bmi088_accel_init(SpiInstance *bmi088_acc);
 
 #define BMI088_TEMP_FACTOR 0.125f
 #define BMI088_TEMP_OFFSET 23.0f
@@ -90,12 +131,4 @@ enum
 
 
 
-extern uint8_t BMI088_init(void);
-extern uint8_t bmi088_accel_init(void);
-extern uint8_t bmi088_gyro_init(void);
-
-extern void BMI088_read(float gyro[3], float accel[3], float *temperate);
-
-
-
-#endif
+ #endif //BMI088_H

@@ -15,7 +15,6 @@
 #include "test.h"
 #include "ws2812.h"
 #include "spi.h"
-#include "BMI088driver.h"
 #include "bsp_dwt.h"
 /* Private variables ---------------------------------------------------------*/
 Ws2812Config ws2812_config = {
@@ -39,15 +38,10 @@ void startCmdTask(void const * argument)
     /* USER CODE BEGIN startCmdTask */
     ws2812_instance=mod_ws2812_register(&ws2812_config);
     mod_ws2812_publish(ws2812_instance, GREEN);
-    while(BMI088_init())
-    {
-        ;
-    }
     /* Infinite loop */
     for(;;)
     {
         dwt_get_time_line_s();
-        BMI088_read(gyro, accel, &temp);
         LOGDEBUG("Hello World!");
 
         osDelay(100);

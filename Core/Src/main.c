@@ -29,7 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "bsp_dwt.h"
 #include "bsp_log.h"
-#include "BMI088driver.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

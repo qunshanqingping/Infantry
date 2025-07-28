@@ -66,7 +66,7 @@ user/bsp/gpio
 user/modules/ws2812
 user/modules/led
 user/modules/callback
-user/modules/imu
+user/modules/bmi088
 user/app/task
 
 )
@@ -91,7 +91,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Middlewares/*.*" "Drivers/*.*"
 "user/modules/ws2812/*.*"
 "user/modules/led/*.*"
 "user/modules/callback/*.*"
-"user/modules/imu/*.*"
+"user/modules/bmi088/*.*"
 "user/app/task/*.*"
 
 )

@@ -6,7 +6,7 @@ static SpiInstance *spi_instance[BSP_SPI_DEVICE_CNT] = {NULL};
 static uint8_t idx = 0;                         // 配合中断以及初始化
 uint8_t SPIDeviceOnGoing[BSP_SPI_DEVICE_CNT] = {1}; // 用于判断当前spi是否正在传输,防止多个模块同时使用一个spi总线 (0: 正在传输, 1: 未传输)
 
-SpiInstance * bsp_spi_register(SpiConfig *conf)
+SpiInstance * spi_register(SpiConfig *conf)
 {
     if (idx >= MX_SPI_BUS_SLAVE_CNT) // 超过最大实例数
     {
@@ -25,11 +25,12 @@ SpiInstance * bsp_spi_register(SpiConfig *conf)
     instance->master_slave_mode = conf->master_slave_mode;
     instance->rx_tx_mode = conf->rx_tx_mode;
     instance->work_mode = conf->work_mode;
+    instance->cs_mode = conf->cs_mode;
 
     instance->cs_port = conf->cs_port;
     instance->cs_pin = conf->cs_pin;
 
-    instance->callback = conf->callback;
+    instance->module_spi_callback = conf->callback;
     instance->handle = conf->handle;
 
     if (instance->cs_port!= NULL)
@@ -60,7 +61,7 @@ SpiInstance * bsp_spi_register(SpiConfig *conf)
     return instance;
 }
 
-void bsp_spi_tx_reset(SpiInstance *spi_ins, uint8_t *tx_buffer, uint8_t tx_len)
+void spi_tx_reset(SpiInstance *spi_ins, uint8_t *tx_buffer, uint8_t tx_len)
 {
     if (spi_ins == NULL || spi_ins->hspi_handle == NULL)
     {
@@ -71,7 +72,7 @@ void bsp_spi_tx_reset(SpiInstance *spi_ins, uint8_t *tx_buffer, uint8_t tx_len)
     spi_ins->tx_len = tx_len;
 }
 
-void bsp_spi_rx_reset(SpiInstance *spi_ins, uint8_t *rx_buffer, uint8_t rx_len)
+void spi_rx_reset(SpiInstance *spi_ins, uint8_t *rx_buffer, uint8_t rx_len)
 {
     if (spi_ins == NULL || spi_ins->hspi_handle == NULL)
     {
@@ -80,20 +81,23 @@ void bsp_spi_rx_reset(SpiInstance *spi_ins, uint8_t *rx_buffer, uint8_t rx_len)
     spi_ins->rx_buffer = rx_buffer;
     spi_ins->rx_len = rx_len;
 }
-
-void bsp_spi_transmit(SpiInstance *spi_ins)
+void spi_cs_high(SpiInstance *spi_ins)
 {
-    // 拉低片选,开始传输(选中从机)
-    if (spi_ins->cs_port != NULL && spi_ins->cs_pin != 0)
-    {
-        HAL_GPIO_WritePin(spi_ins->cs_port, spi_ins->cs_pin, GPIO_PIN_RESET);
-    }
+    HAL_GPIO_WritePin(spi_ins->cs_port, spi_ins->cs_pin, GPIO_PIN_SET);
+    spi_ins->CS_State = HAL_GPIO_ReadPin(spi_ins->cs_port, spi_ins->cs_pin);
+}
+void spi_cs_low(SpiInstance *spi_ins)
+{
+    HAL_GPIO_WritePin(spi_ins->cs_port, spi_ins->cs_pin, GPIO_PIN_RESET);
+    spi_ins->CS_State = HAL_GPIO_ReadPin(spi_ins->cs_port, spi_ins->cs_pin);
+}
+
+void spi_transmit(SpiInstance *spi_ins)
+{
     switch (spi_ins->work_mode)
     {
     case BLOCK_MODE:
         HAL_SPI_Transmit(spi_ins->hspi_handle,spi_ins->tx_buffer, spi_ins->tx_len, 1000); // 默认1000ms超时
-        // 阻塞模式不会调用回调函数,传输完成后直接拉高片选结束
-        HAL_GPIO_WritePin(spi_ins->cs_port, spi_ins->cs_pin, GPIO_PIN_SET);
         break;
     case IT_MODE:
         HAL_SPI_Transmit_IT(spi_ins->hspi_handle, spi_ins->tx_buffer, spi_ins->tx_len);
@@ -109,3 +113,23 @@ void bsp_spi_transmit(SpiInstance *spi_ins)
     }
 }
 
+void spi_trans_recv(SpiInstance* spi_ins, uint8_t *tx_buffer, uint8_t *rx_buffer, uint8_t len)
+{
+    spi_ins->tx_buffer = tx_buffer;
+    spi_ins->rx_buffer = rx_buffer;
+    spi_ins->tx_len = spi_ins->tx_len = len;
+    switch (spi_ins->work_mode)
+    {
+        case DMA_MODE:
+            HAL_SPI_TransmitReceive_DMA(spi_ins->hspi_handle, tx_buffer, rx_buffer, len);
+            break;
+        case IT_MODE:
+            HAL_SPI_TransmitReceive_IT(spi_ins->hspi_handle, tx_buffer, rx_buffer, len);
+            break;
+        case BLOCK_MODE:
+            HAL_SPI_TransmitReceive(spi_ins->hspi_handle, tx_buffer, rx_buffer, len, 1000);
+            break;
+        default:
+            while (1){}
+    }
+}

@@ -3,7 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/User/bin/bmi088/BMI088Middleware.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/User/bin/bmi088/BMI088driver.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/User/modules/imu/BMI088Middleware.c" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/User/modules/imu/BMI088driver.c" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/User/modules/bmi088/BMI088Middleware.c" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/User/modules/bmi088/BMI088driver.c" charset="UTF-8" />
   </component>
 </project>

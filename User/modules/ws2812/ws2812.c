@@ -71,7 +71,7 @@ Ws2812Instance * mod_ws2812_register(Ws2812Config *config)
         while (1); // 内存分配失败,请检查内存是否足够
     }
     ws2812_instance->color = config->color;
-    ws2812_instance->spi_instance = bsp_spi_register(&config->spi_config);
+    ws2812_instance->spi_instance = spi_register(&config->spi_config);
     return ws2812_instance;
 }
 
@@ -84,6 +84,6 @@ void mod_ws2812_publish(Ws2812Instance *ws2812_instance,uint8_t update_color)
         return;
     }
     ws2812_instance->color = update_color;
-    bsp_spi_tx_reset(ws2812_instance->spi_instance,ColorTxBuf[ws2812_instance->color],24);
-    bsp_spi_transmit(ws2812_instance->spi_instance);
+    spi_tx_reset(ws2812_instance->spi_instance,ColorTxBuf[ws2812_instance->color],24);
+    spi_transmit(ws2812_instance->spi_instance);
 }
